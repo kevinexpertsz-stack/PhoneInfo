@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-color: #f8fafc;
+    --text-color: #0f172a;
+    --card-bg: #ffffff;
+    --accent: #3b82f6;
+    --border-color: #e2e8f0;
+    --muted-text: #64748b;
+  }
+  
+  .dark {
+    --bg-color: #020617;
+    --text-color: #f8fafc;
+    --card-bg: #0f172a;
+    --accent: #8b5cf6;
+    --border-color: #1e293b;
+    --muted-text: #94a3b8;
+  }
+
+  body {
+    @apply antialiased transition-colors duration-300;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Inter', sans-serif;
+    /* Disable double-tap to zoom for mobile feel */
+    touch-action: pan-x pan-y;
+  }
+}
+
+.glass-panel {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.dark .glass-panel {
+  background-color: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+}
