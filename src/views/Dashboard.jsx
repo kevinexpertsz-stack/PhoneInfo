@@ -36,14 +36,13 @@ const DashboardCard = ({ title, icon: Icon, stat, subStat, highlight, detailedIn
   );
 };
 
-const Dashboard = () => {
-  const [data, setData] = useState(null);
+const Dashboard = ({ data }) => {
   const [expandedCard, setExpandedCard] = useState(null);
   const telemetry = useTelemetry(1500);
 
-  useEffect(() => {
-    getDeviceInfo().then(res => setData(res));
-  }, []);
+  const toggleCard = (id) => {
+    setExpandedCard(prev => prev === id ? null : id);
+  };
 
   const isMobile = data?.system?.deviceModel?.toLowerCase().includes('mobile') || data?.system?.deviceModel?.toLowerCase().includes('tablet');
   const { scrapedData } = useScraper(
@@ -52,11 +51,35 @@ const Dashboard = () => {
     isMobile
   );
 
-  if (!data) return null;
-
-  const toggleCard = (id) => {
-    setExpandedCard(prev => prev === id ? null : id);
-  };
+  if (!data) return (
+    <div className="flex flex-col gap-6 animate-pulse px-2 overflow-hidden">
+      <div className="space-y-3 px-2">
+        <div className="h-10 w-48 bg-border/40 rounded-xl"></div>
+        <div className="h-4 w-64 bg-border/20 rounded-md"></div>
+        <div className="flex gap-2 mt-4">
+           <div className="h-6 w-32 bg-border/20 rounded"></div>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+        {[1,2,3,4].map(i => (
+          <div key={i} className="glass-panel h-48 rounded-[2rem] p-5 border border-border/20 flex flex-col justify-between">
+            <div className="flex gap-3">
+              <div className="w-10 h-10 rounded-xl bg-border/30"></div>
+              <div className="h-6 w-24 bg-border/30 rounded-md self-center"></div>
+            </div>
+            <div className="space-y-2">
+              <div className="h-8 w-1/3 bg-border/30 rounded-lg"></div>
+              <div className="h-4 w-1/2 bg-border/20 rounded-md"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-center py-10 opacity-50">
+         <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent animate-pulse">Running Background Hardware Sync</span>
+      </div>
+    </div>
+  );
 
   return (
     <div className="flex flex-col gap-4 animate-fade-in pb-4">

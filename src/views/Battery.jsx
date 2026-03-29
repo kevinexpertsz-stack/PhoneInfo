@@ -49,7 +49,19 @@ const BatteryView = () => {
     );
   }
 
-  if (!batteryData) return null;
+  if (!batteryData && !error) return (
+    <div className="animate-pulse space-y-6 mx-4 mt-2 px-2">
+      <div className="flex flex-col items-center justify-center p-8 bg-border/20 glass-panel border border-border/50 rounded-3xl h-64">
+        <div className="w-20 h-28 bg-border/30 rounded-xl mb-4"></div>
+        <div className="h-10 w-24 bg-border/30 rounded-lg"></div>
+      </div>
+      <div className="glass-panel rounded-3xl p-5 border border-border/20 space-y-4 h-48">
+         <div className="h-6 w-full bg-border/10 rounded"></div>
+         <div className="h-6 w-full bg-border/10 rounded"></div>
+         <div className="h-6 w-full bg-border/10 rounded"></div>
+      </div>
+    </div>
+  );
 
   const BatteryIcon = batteryData.charging ? BatteryCharging : (batteryData.level > 90 ? BatteryFull : Battery);
   const iconColor = batteryData.charging ? "text-emerald-500" : (batteryData.level < 20 ? "text-red-500" : "text-accent");

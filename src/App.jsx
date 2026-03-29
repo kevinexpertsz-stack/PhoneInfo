@@ -39,6 +39,7 @@ function App() {
 
   const [isBooting, setIsBooting] = useState(true);
   const [isNative, setIsNative] = useState(true);
+  const [deviceData, setDeviceData] = useState(null);
   
   useEffect(() => {
     // Safety bypass: Force open the app if the scan takes more than 3.5 seconds
@@ -48,6 +49,7 @@ function App() {
     }, 3500);
 
     getDeviceInfo().then((res) => {
+      setDeviceData(res);
       setIsNative(res.isNative);
       // Small artificial delay for premium boot feel
       setTimeout(() => {
@@ -81,14 +83,14 @@ function App() {
   const renderView = () => {
     switch (viewToRender) {
       case 'home': return <Home onNavigate={navigateTo} />;
-      case 'dashboard': return <Dashboard />;
-      case 'hardware': return <Hardware />;
-      case 'system': return <System />;
-      case 'battery': return <BatteryView />;
-      case 'camera': return <Camera />;
-      case 'sensors': return <Sensors />;
-      case 'benchmark': return <Benchmark />;
-      case 'about': return <About />;
+      case 'dashboard': return <Dashboard data={deviceData} />;
+      case 'hardware': return <Hardware data={deviceData} />;
+      case 'system': return <System data={deviceData} />;
+      case 'battery': return <BatteryView data={deviceData} />;
+      case 'camera': return <Camera data={deviceData} />;
+      case 'sensors': return <Sensors data={deviceData} />;
+      case 'benchmark': return <Benchmark data={deviceData} />;
+      case 'about': return <About data={deviceData} />;
       default: return <Home onNavigate={navigateTo} />;
     }
   };

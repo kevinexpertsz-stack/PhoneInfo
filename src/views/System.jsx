@@ -21,14 +21,27 @@ const SystemSection = ({ title, children }) => (
   </div>
 );
 
-const System = () => {
-  const [data, setData] = useState(null);
+const System = ({ data: fullData }) => {
+  const data = fullData?.system;
 
-  useEffect(() => {
-    getDeviceInfo().then(res => setData(res.system));
-  }, []);
-
-  if (!data) return null;
+  if (!data) return (
+    <div className="animate-pulse space-y-4">
+      <div className="flex flex-col items-center justify-center p-6 bg-border/20 glass-panel rounded-3xl mb-6">
+        <div className="w-16 h-16 rounded-full bg-border/30 mb-3"></div>
+        <div className="h-8 w-40 bg-border/30 rounded-lg mb-2"></div>
+        <div className="h-4 w-24 bg-border/20 rounded-md"></div>
+      </div>
+      {[1, 2, 3].map(i => (
+        <div key={i} className="glass-panel rounded-3xl p-4 border border-border/20 space-y-3">
+          <div className="h-4 w-24 bg-border/30 rounded"></div>
+          <div className="space-y-2">
+            <div className="h-6 w-full bg-border/10 rounded"></div>
+            <div className="h-6 w-full bg-border/10 rounded"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className="pb-4">

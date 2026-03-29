@@ -26,13 +26,7 @@ const DetailRow = ({ label, value, highlight }) => (
   </div>
 );
 
-const Hardware = () => {
-  const [data, setData] = useState(null);
-  
-  useEffect(() => {
-    getDeviceInfo().then(res => setData(res));
-  }, []);
-
+const Hardware = ({ data }) => {
   const isMobile = data?.system?.deviceModel?.toLowerCase().includes('mobile') || data?.system?.deviceModel?.toLowerCase().includes('tablet');
   const { scrapedData } = useScraper(
     isMobile ? data?.system?.deviceName : data?.hardware?.processor?.model,
@@ -43,7 +37,27 @@ const Hardware = () => {
   // Use telemetry for live GPU power/fans if available
   const telemetry = useTelemetry(1500);
 
-  if (!data) return null;
+  if (!data) return (
+    <div className="animate-pulse space-y-4">
+      {[1, 2, 3].map(i => (
+        <div key={i} className="glass-panel rounded-3xl p-5 border border-border/20">
+          <div className="flex items-center gap-3 mb-4 border-b border-border/50 pb-3">
+            <div className="w-8 h-8 rounded-lg bg-border/30"></div>
+            <div className="h-6 w-32 bg-border/20 rounded"></div>
+          </div>
+          <div className="space-y-3">
+             <div className="h-12 w-full bg-border/10 rounded-xl"></div>
+             <div className="grid grid-cols-4 gap-2">
+                <div className="h-8 bg-border/10 rounded"></div>
+                <div className="h-8 bg-border/10 rounded"></div>
+                <div className="h-8 bg-border/10 rounded"></div>
+                <div className="h-8 bg-border/10 rounded"></div>
+             </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className="pb-4">
