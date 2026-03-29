@@ -55,13 +55,20 @@ const getBrowserTelemetry = async () => {
 
     if ('getBattery' in navigator) {
       try {
-        const battery = await navigator.getBattery();
+        // Battery API can hang in some environments, so we wrap it
+        const batteryPromise = navigator.getBattery();
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Battery Timeout")), 1500));
+        
+        const battery = await Promise.race([batteryPromise, timeoutPromise]);
+        
         batteryData.percentage = Math.round(battery.level * 100);
         batteryData.status = battery.charging ? "Charging" : "Discharging";
         batteryData.estimateTime = battery.charging 
           ? (battery.chargingTime === Infinity ? "Calculating..." : `${Math.round(battery.chargingTime / 60)} min full`)
           : (battery.dischargingTime === Infinity ? "Calculating..." : `${Math.round(battery.dischargingTime / 60)} min left`);
-      } catch (e) {}
+      } catch (e) {
+        console.warn("Battery API unavailable or timed out:", e.message);
+      }
     }
 
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown Timezone';

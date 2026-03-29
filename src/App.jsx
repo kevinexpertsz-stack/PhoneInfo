@@ -41,11 +41,22 @@ function App() {
   const [isNative, setIsNative] = useState(true);
   
   useEffect(() => {
+    // Safety bypass: Force open the app if the scan takes more than 3.5 seconds
+    const safetyTimeout = setTimeout(() => {
+      console.warn("Hardware scan taking too long. Using emergency bypass...");
+      setIsBooting(false);
+    }, 3500);
+
     getDeviceInfo().then((res) => {
       setIsNative(res.isNative);
       // Small artificial delay for premium boot feel
-      setTimeout(() => setIsBooting(false), 800);
+      setTimeout(() => {
+        setIsBooting(false);
+        clearTimeout(safetyTimeout);
+      }, 800);
     });
+
+    return () => clearTimeout(safetyTimeout);
   }, []);
 
   const toggleTheme = () => {
