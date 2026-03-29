@@ -1,5 +1,5 @@
 import React from 'react';
-import { Info, Code2, Heart, ExternalLink } from 'lucide-react';
+import { Info, Code2, Heart, ExternalLink, Zap } from 'lucide-react';
 
 const About = () => {
   return (
@@ -17,10 +17,34 @@ const About = () => {
           This application was reconstructed to ditch static mock data and intelligently extract genuine hardware arrays from deep inside your web browser's limits.
         </p>
 
-        <div className="bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 p-4 rounded-xl flex gap-3 text-xs leading-relaxed mt-4">
+        <div className="bg-bg/40 border border-border/50 p-5 rounded-[1.5rem] space-y-4">
+           <div className="flex items-center gap-2 text-accent font-bold uppercase tracking-widest text-[10px]">
+             <Zap size={14} /> Performance Tiers
+           </div>
+           
+           <div className="space-y-3">
+             <div className="flex gap-3">
+               <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0 text-orange-500 font-bold text-xs italic">L</div>
+               <div>
+                  <h4 className="font-bold text-sm">Lite Mode (Browser Sandbox)</h4>
+                  <p className="text-[12px] text-muted leading-relaxed">Active on Vercel/Web. To protect your privacy, browsers block access to BIOS, CPU model, and temperatures. N/A values are browser-restricted.</p>
+               </div>
+             </div>
+
+             <div className="flex gap-3">
+               <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0 text-emerald-500 font-bold text-xs italic">P</div>
+               <div>
+                  <h4 className="font-bold text-sm">Pro Mode (Local Node Engine)</h4>
+                  <p className="text-[12px] text-muted leading-relaxed">Active when running locally via <code>npm run dev</code>. Unlocks BIOS, Caches, Instruction Sets, and live hardware frequencies.</p>
+               </div>
+             </div>
+           </div>
+        </div>
+
+        <div className="bg-accent/10 border border-accent/20 text-accent p-4 rounded-xl flex gap-3 text-xs leading-relaxed mt-4">
            <Info size={16} className="shrink-0 mt-0.5" />
            <p>
-             <strong>Privacy Sandbox Notice:</strong> Web browsers inherently hide precise temperatures, granular CPU core speeds, and battery cycling to protect you from fingerprint tracking. What you see is the absolute maximum data securely permissible.
+             <strong>Right Information Requirement:</strong> To see full hardware details on another PC, you must run the code locally on that machine. A website alone cannot "reach into" your computer hardware.
            </p>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { AlertCircle, Moon, Sun, ChevronLeft } from 'lucide-react';
 
-const Header = ({ toggleTheme, theme, isHome, onBack, title }) => {
+const Header = ({ toggleTheme, theme, isHome, onBack, title, isNative }) => {
   return (
     <header className="sticky top-0 w-full z-50 glass backdrop-blur-md px-4 py-4 flex items-center justify-between shadow-sm border-b border-border transition-colors duration-300">
       <div className="flex-1 flex justify-start">
@@ -16,8 +16,13 @@ const Header = ({ toggleTheme, theme, isHome, onBack, title }) => {
         )}
       </div>
       
-      <div className="flex-2 flex justify-center text-center">
+      <div className="flex-2 flex flex-col items-center justify-center text-center">
         <h1 className="text-xl font-bold tracking-tight text-text whitespace-nowrap">{title}</h1>
+        {isHome && (
+          <div className={`mt-0.5 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest border transition-colors ${isNative ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-orange-500/10 text-orange-500 border-orange-500/20'}`}>
+            {isNative ? 'Pro Node Connection' : 'Mobile Lite Mode'}
+          </div>
+        )}
       </div>
       
       <div className="flex-1 flex justify-end">

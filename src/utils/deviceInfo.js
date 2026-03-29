@@ -10,21 +10,33 @@ const getBrowserTelemetry = async () => {
     const deviceModel = result.device.model || 'Unknown Device';
     const deviceVendor = result.device.vendor || result.browser.name || 'Unknown Vendor';
     const deviceType = result.device.type || 'Desktop/Laptop';
-    const architecture = result.cpu.architecture || 'Unknown Arch';
+    
+    // Better architecture detection
+    let architecture = result.cpu.architecture || 'x64';
+    if (navigator.userAgentData && navigator.userAgentData.platform === 'arm') architecture = 'ARM';
+    
+    // Better CPU Branding for browser mode (Stop "Edge Processor")
+    let cpuBrand = result.os.name === 'Windows' ? 'Intel/AMD Processor' : `${deviceVendor} Processor`;
+    if (architecture.includes('ARM') || (result.os.name === 'Mac OS' && architecture === 'arm64')) cpuBrand = 'Apple Silicon / ARM';
 
     const cores = navigator.hardwareConcurrency || 'N/A';
     const memory = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'N/A (Hidden by browser)';
     
-    let gpuRenderer = "Unknown GPU";
-    let gpuVendor = "Unknown Vendor";
     try {
       const canvas = document.createElement("canvas");
       const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
       if (gl) {
         const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
         if (debugInfo) {
-          gpuRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+          let rawGpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
           gpuVendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+          
+          // Clean GPU name: Remove ANGLE, Direct3D, etc.
+          gpuRenderer = rawGpu
+            .replace(/ANGLE \((.*)\)/, '$1')
+            .replace(/Direct3D11 vs_5_0 ps_5_0/, '')
+            .split(',')[0]
+            .trim();
         }
       }
     } catch(e) {}
@@ -56,13 +68,14 @@ const getBrowserTelemetry = async () => {
     const language = navigator.language || 'English';
 
     return {
+      isNative: false,
       dashboard: {
         cpu: {
           usage: "N/A",
           idleStatus: "Browser Sandbox",
           temp: "N/A",
           cores: Array.from({ length: cores !== 'N/A' ? cores : 4 }).map((_, i) => ({ name: `Logical Core ${i+1}`, usage: "Hidden" })),
-          model: `${deviceVendor} Processor`,
+          model: cpuBrand,
           architecture: architecture,
           l1Cache: "N/A",
           l2Cache: "N/A",
@@ -153,13 +166,22 @@ const getBrowserTelemetry = async () => {
 let globalCache = null;
 let pendingPromise = null;
 
+const fetchWithTimeout = async (resource, options = {}) => {
+  const { timeout = 15000 } = options;
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  const response = await fetch(resource, { ...options, signal: controller.signal });
+  clearTimeout(id);
+  return response;
+};
+
 export const getDeviceInfo = async () => {
    if (globalCache) return globalCache;
    if (pendingPromise) return pendingPromise;
 
    pendingPromise = (async () => {
      try {
-       const res = await fetch('/api/hardware');
+       const res = await fetchWithTimeout('/api/hardware');
      if (!res.ok) throw new Error("Local backend not available");
      const sys = await res.json();
      
@@ -189,6 +211,7 @@ export const getDeviceInfo = async () => {
      const primaryNet = sys.network ? (sys.network.find(n => n.default) || sys.network[0]) : {};
 
      return {
+        isNative: true,
         dashboard: {
           cpu: {
             usage: "Live Backend",

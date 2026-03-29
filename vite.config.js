@@ -174,4 +174,7 @@ export default defineConfig({
     react(),
     hardwareApiPlugin()
   ],
+  server: {
+    host: true
+  }
 })

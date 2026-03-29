@@ -37,11 +37,12 @@ function App() {
     }
   }, [theme]);
 
-  // Global Boot Sequence Lock
   const [isBooting, setIsBooting] = useState(true);
+  const [isNative, setIsNative] = useState(true);
   
   useEffect(() => {
-    getDeviceInfo().then(() => {
+    getDeviceInfo().then((res) => {
+      setIsNative(res.isNative);
       // Small artificial delay for premium boot feel
       setTimeout(() => setIsBooting(false), 800);
     });
@@ -85,7 +86,14 @@ function App() {
     <>
     {isBooting && <BootScreen />}
     <div className={`min-h-screen max-w-md mx-auto relative overflow-hidden flex flex-col shadow-2xl bg-bg sm:border-x border-border transition-opacity duration-700 ${isBooting ? 'opacity-0' : 'opacity-100'}`}>
-      <Header toggleTheme={toggleTheme} theme={theme} isHome={currentView === 'home'} onBack={handleBack} title={currentView === 'home' ? 'Phone Info' : currentView.charAt(0).toUpperCase() + currentView.slice(1)} />
+      <Header 
+        toggleTheme={toggleTheme} 
+        theme={theme} 
+        isHome={currentView === 'home'} 
+        onBack={handleBack} 
+        isNative={isNative}
+        title={currentView === 'home' ? 'Phone Info' : currentView.charAt(0).toUpperCase() + currentView.slice(1)} 
+      />
       
       <main className="flex-1 w-full relative z-0 hide-scrollbar overflow-y-auto pb-6">
         <div className={`transition-all duration-300 ease-in-out px-4 pt-4 pb-8 ${isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>

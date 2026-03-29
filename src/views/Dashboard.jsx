@@ -68,12 +68,18 @@ const Dashboard = () => {
             <span className="text-accent">{data.dashboard.cpu.model}</span> • <span>{data.system.operatingSystem}</span>
           </p>
           <div className="flex items-center gap-2 mt-2">
-             <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[10px] font-bold rounded uppercase">
-                <Activity size={10} /> Live Monitoring Active
+             <div className={`flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-bold rounded uppercase ${data.isNative ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-orange-500/10 text-orange-500 border border-orange-500/20'}`}>
+                <Activity size={10} /> {data.isNative ? 'Pro Mode Active' : 'Lite Mode: Browser Sandbox'}
              </div>
-             <div className="text-[10px] text-muted font-bold uppercase tracking-widest">
-                Uptime: {data.system.uptime || "N/A"}
-             </div>
+             {data.isNative ? (
+               <div className="text-[10px] text-muted font-bold uppercase tracking-widest bg-emerald-500/5 px-2 py-0.5 rounded">
+                  Status: Full Telemetry
+               </div>
+             ) : (
+               <div className="text-[10px] text-orange-500/80 font-bold uppercase tracking-widest bg-orange-500/5 px-2 py-0.5 rounded flex items-center gap-1">
+                  <Zap size={10} /> Running locally recommended
+               </div>
+             )}
           </div>
         </div>
       </div>
